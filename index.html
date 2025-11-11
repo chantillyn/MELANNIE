@@ -207,6 +207,63 @@
       height: 93px;
     }
   }
+  @media (max-width: 768px) {
+  .photo {
+    width: 90px;         /* más pequeñas */
+    height: auto;
+  }
+
+  .photo.left {
+    left: -10px;         /* más cerca del sobre */
+    top: 50%;
+    transform: translateY(-50%) rotate(-10deg);
+  }
+
+  .photo.right {
+    right: -10px;        /* igual al otro lado */
+    top: 50%;
+    transform: translateY(-50%) rotate(10deg);
+  }
+
+  .envelope {
+    width: 230px;
+    height: 130px;
+  }
+
+  .letter {
+    width: 180px;
+    height: 200px;
+  }
+
+  button {
+    transform: scale(0.9);
+  }
+}
+
+/* Para pantallas aún más pequeñas (teléfonos chicos) */
+@media (max-width: 480px) {
+  .photo {
+    width: 80px;
+  }
+
+  .photo.left {
+    left: -5px;
+  }
+
+  .photo.right {
+    right: -5px;
+  }
+
+  .envelope {
+    width: 200px;
+    height: 120px;
+  }
+
+  .letter {
+    width: 160px;
+    height: 190px;
+  }
+}
 </style>
 </head>
 <body>
