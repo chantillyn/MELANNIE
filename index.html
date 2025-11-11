@@ -3,54 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sobre con Carta</title>
+<title>Carta en Sobre</title>
 <style>
+  /* Fondo con degradado y estrellas */
   body {
     margin: 0;
     height: 100vh;
     overflow: hidden;
-    font-family: 'Poppins', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(to bottom, #0a1e40, #163b70, #2a5da8);
+    font-family: 'Poppins', sans-serif;
+    background: radial-gradient(circle at bottom, #1b2b5a 0%, #0a1e40 100%);
     position: relative;
   }
 
-  /* Fondo de estrellas */
-  .stars {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(white, transparent) 1px 1px;
-    background-size: 3px 3px;
-    opacity: 0.5;
-    z-index: 1;
+  canvas#stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 0;
   }
 
   /* Luna */
   .moon {
     position: absolute;
-    top: 50px;
-    right: 40px;
+    top: 40px;
+    right: 50px;
     width: 70px;
     height: 70px;
     background: radial-gradient(circle at 30% 30%, #fff 60%, #ddd 100%);
     border-radius: 50%;
     box-shadow: 0 0 20px 5px #fff;
-    z-index: 2;
+    z-index: 1;
   }
 
   /* Contenedor principal */
   .container {
     position: relative;
-    z-index: 3;
+    z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  /* Sobre cerrado */
+  /* Sobre */
   .envelope {
     position: relative;
     width: 220px;
@@ -58,12 +55,12 @@
     background: #c0392b;
     border-radius: 5px;
     overflow: hidden;
-    cursor: pointer;
     box-shadow: 0 5px 20px rgba(0,0,0,0.4);
-    transition: transform 0.5s;
+    cursor: pointer;
+    z-index: 2;
   }
 
-  /* Tapa del sobre */
+  /* Solapa del sobre */
   .envelope::before {
     content: "";
     position: absolute;
@@ -76,95 +73,134 @@
     transition: transform 0.6s ease;
   }
 
-  /* Carta dentro */
-  .letter {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    height: 180px;
-    background: #fffaf0;
-    padding: 15px;
-    box-sizing: border-box;
-    transition: top 0.8s ease;
-    overflow: hidden;
-  }
+  /* Carta */
+.letter {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 220px; /* tamaño fijo de la carta */
+  background: #fffaf0;
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  padding: 15px;
+  box-sizing: border-box;
+  transition: all 0.9s ease;
+  opacity: 0;
+  overflow: hidden; /* al principio oculta */
+  z-index: 1;
+}
 
-  .letter textarea {
-    width: 100%;
-    height: 100%;
-    border: none;
-    resize: none;
-    outline: none;
-    background: transparent;
-    font-size: 14px;
-  }
+/* Al abrir: se muestra y permite desplazarse */
+.open .letter {
+  bottom: 180px;
+  opacity: 1;
+  overflow-y: auto; /* permite scroll vertical */
+}
 
-  /* Botón “Tócame” */
+/* Estilo del texto dentro */
+.letter p {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Scrollbar bonito */
+.letter::-webkit-scrollbar {
+  width: 6px;
+}
+
+.letter::-webkit-scrollbar-thumb {
+  background-color: #e0b973;
+  border-radius: 3px;
+}
+
+.letter::-webkit-scrollbar-thumb:hover {
+  background-color: #c9983c;
+}
+
+
+  /* Botón */
   .button {
-    margin-top: 15px;
+    margin-top: 20px;
     background: #f39c12;
     border: none;
     border-radius: 20px;
-    padding: 10px 20px;
+    padding: 10px 25px;
     color: white;
     font-weight: bold;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: background 0.3s, transform 0.2s;
+    z-index: 3;
   }
   .button:hover {
     background: #e67e22;
+    transform: scale(1.05);
   }
 
-  /* Polaroids */
-  .polaroids {
-    position: absolute;
-    top: 50%;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    padding: 0 20px;
-    transform: translateY(-50%);
-    z-index: 0;
-  }
+  /* Polaroids a los costados del sobre */
+.polaroids {
+  position: relative;
+  width: 100%;
+  height: 0;
+  z-index: 0; /* detrás del sobre */
+}
 
-  .polaroid {
-    width: 80px;
-    height: 100px;
-    background: #fff;
-    border: 2px solid #eee;
-    box-shadow: 0 5px 10px rgba(0,0,0,0.3);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-size: 12px;
-    cursor: pointer;
-  }
+.polaroid {
+  position: absolute;
+  top: 50%;
+  width: 100px;
+  height: 120px;
+  background: white;
+  border: 2px solid #f2f2f2;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateY(-50%) rotate(-8deg) scale(0.9);
+  transition: transform 0.3s ease;
+}
 
-  .polaroid input {
-    display: none;
-  }
+.polaroid.left {
+  left: -120px; /* mueve a la izquierda del sobre */
+}
 
-  .polaroid img {
-    width: 100%;
-    height: 80%;
-    object-fit: cover;
-    border-bottom: 2px solid #ddd;
-  }
+.polaroid.right {
+  right: -120px; /* mueve a la derecha del sobre */
+  transform: translateY(-50%) rotate(8deg) scale(0.9);
+}
 
-  /* Animación abrir */
+.polaroid:hover {
+  transform: translateY(-50%) rotate(0deg) scale(1.05);
+}
+
+.polaroid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 3px;
+}
+
+  /* Animaciones al abrir */
   .open .envelope::before {
     transform: rotateX(180deg);
   }
+
   .open .letter {
-    top: -50px;
+    bottom: 180px;
+    opacity: 1;
   }
 
   @media (max-width: 600px) {
     .envelope {
       width: 180px;
       height: 120px;
+    }
+    .letter {
+      width: 160px;
+      height: 200px;
     }
     .polaroid {
       width: 70px;
@@ -175,44 +211,93 @@
 </head>
 <body>
 
-<div class="stars"></div>
+<canvas id="stars"></canvas>
 <div class="moon"></div>
 
 <div class="container">
+  <!-- Polaroids -->
   <div class="polaroids">
-    <label class="polaroid">
-      <input type="file" accept="image/*" onchange="previewImage(event, 0)">
-      <img id="img0" src="" alt="+" />
-    </label>
-    <label class="polaroid">
-      <input type="file" accept="image/*" onchange="previewImage(event, 1)">
-      <img id="img1" src="" alt="+" />
-    </label>
+    <div class="polaroid left"><img src="melyyo1.jpg" alt="Imagen 1"></div>
+    <div class="polaroid right"><img src="melyyo3.jpg" alt="Imagen 2"></div>
   </div>
 
+  <!-- Sobre -->
   <div class="envelope" id="envelope"></div>
 
+  <!-- Carta -->
   <div class="letter" id="letter">
-    <textarea placeholder="Escribe aquí tu mensaje..."></textarea>
+    <p>
+      HOLA AMOR DE MI VIDA 
+      <br><br>
+      Hola mi amor.
+Primero que nada, no sé escribir y esto lo escribiré como me salga, entonces de verdad espero que se entienda mi punto y ajam. Yo creo que quiero empezar pidiéndote una disculpa, porque sé que hay muchas acciones mías que, aunque no son con mala intención o por falta de amor, sé que te afectan y afectan a nuestra bonita relación.
+
+Sé que sientes que dejé de hacer muchas cosas, y bueno, me doy cuenta de que no solo lo sientes, es porque sí pasó. Pero no es porque ya no te ame o así. Como te digo, siento que al inicio todo era nuevo y, pues conforme pasó el tiempo, no es que te dejara de amar, solo mmmm pues me sentí más cómodo y más tranquilo, y solo mi forma de demostrarte todo mi afecto y amor se adaptó.
+
+De verdad que yo te amo con todo mi corazón, mi amor. Lo siento si a veces no lo sientes y créeme que me importa que lo sientas, por eso me interesa mucho que me digas cuando algo no te gusta o hago mal o así. Mis cambios de actitudes son más por ser un distraído, pero en serio estoy muy comprometido en cambiar eso, porque me importas tú, me interesas tú y yo quiero que seas feliz conmigo.
+
+Quiero ser más atento para que no se me escape ningún detalle ni nada, mi vida, y demostrarte que quiero estar contigo toda mi vida. Tal vez es muy tedioso estar hablando siempre por algunas diferencias, malentendidos y así, pero creo que es parte de un proceso para pulir esos defectos y que nuestra relación dure para toda la vida, como quiero.
+
+Quiero que seas mi todo, no solo un “ojalá”, un “tal vez” o así. Quiero estar con mi Mel hermosa.
+
+Sobre hoy, perdóname si te hice sentir mal por mi forma de hablar. Nunca quise ser grosero y de verdad que no lo era, pero entiendo que se sienta así. Algunos detalles se me siguen escapando, pero de verdad confío en que puedo poner más atención en esos pequeños detalles, y lo sé muy bien porque yo haría cualquier cosa por ti. Estoy seguro de que puedo ser un mejor novio, un mejor compañero, un mejor amigo.
+
+Sé que últimamente hemos tenido más pláticas así o diferencias, y de verdad entiendo si mis acciones o palabras se malinterpretan y te lastiman. Estoy aprendiendo de cada error y de cada plática que tenemos, porque no quiero seguir cometiendo los mismos errores.
+
+Te amo con toda mi alma y vida, Melannie. ❤️
+      <br><br>
+      Te ama tu chan<br>
+      
+    </p>
   </div>
 
-  <button class="button" id="btnAbrir">💌 Tócame</button>
+  <!-- Botón -->
+  <button class="button" id="btnAbrir">💌 Ábreme</button>
+
+  <!-- Música (definida en Visual Studio) -->
+  <audio id="music" src="mp3\05 - YSY A - A POR TODO (PROD (mp3cut.net).mp3"></audio>
 </div>
 
 <script>
-  const envelope = document.getElementById('envelope');
-  const letter = document.getElementById('letter');
-  const button = document.getElementById('btnAbrir');
   const container = document.querySelector('.container');
+  const button = document.getElementById('btnAbrir');
+  const audio = document.getElementById('music');
 
   button.addEventListener('click', () => {
     container.classList.toggle('open');
+    if (container.classList.contains('open')) {
+      audio.currentTime = 0;
+      audio.play();
+    } else {
+      audio.pause();
+    }
   });
 
-  function previewImage(event, index) {
-    const img = document.getElementById('img' + index);
-    img.src = URL.createObjectURL(event.target.files[0]);
+  // Dibuja estrellas aleatorias en el fondo
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  function drawStars() {
+    const numStars = 150;
+    for (let i = 0; i < numStars; i++) {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
+      const r = Math.random() * 1.2;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, 2 * Math.PI);
+      ctx.fillStyle = "white";
+      ctx.fill();
+    }
   }
+  drawStars();
+
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    drawStars();
+  });
 </script>
 
 </body>
